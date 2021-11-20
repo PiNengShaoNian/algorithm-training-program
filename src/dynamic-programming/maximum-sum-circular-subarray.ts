@@ -1,3 +1,4 @@
+//单调队列解法
 export function maxSubarraySumCircular(nums: number[]): number {
   //循环数组可以通过将nums复制一倍接在nums尾部模拟出来，然后这题就和
   //最大子数组和的思路差不多了，不过要控制前缀和的
@@ -39,4 +40,33 @@ export function maxSubarraySumCircular(nums: number[]): number {
   }
 
   return ans
+}
+
+//动态规划解法
+export function maxSubarraySumCircular1(nums: number[]): number {
+  //循环列表中最大的数组和无非就只用两种情况一种最大和在中间区域,
+  //比如[-3,3,-3],有可能在两边[3,-3,3],第一种情况中的做法和求最大和子数组
+  //一模一样,第二种情况中最大的子数组和等于数组的sum减掉最小和子数组和
+
+  const dpMin: number[] = []
+  const dpMax: number[] = []
+  let sum = (dpMin[0] = dpMax[0] = nums[0])
+
+  for (let i = 1; i < nums.length; ++i) {
+    dpMin[i] = Math.min(dpMin[i - 1] + nums[i], nums[i])
+    dpMax[i] = Math.max(dpMax[i - 1] + nums[i], nums[i])
+    sum += nums[i]
+  }
+
+  const min = Math.min(...dpMin)
+  const max = Math.max(...dpMax)
+
+  return Math.max(
+    //最大和由中间的元素累加而来
+    max,
+    //最大和由在两边的元素相加而来,注意在全是负数的数组中比如[-2]那么sum - min为0
+    //但是实际的答案为-2所以特别处理一下这种情况，如果一个循环数组全为负数
+    //那么他的最大子数组和就是其中最大的那个元素
+    sum - min === 0 ? max : sum - min
+  )
 }
