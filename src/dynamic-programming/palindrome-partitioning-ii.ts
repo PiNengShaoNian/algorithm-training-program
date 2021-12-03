@@ -18,6 +18,7 @@ export function minCut(s: string): number {
     }
   }
 
+  //dp[i]表示s[0,i]所表示的字串需要的最小分割次数为dp[i]
   const dp: number[] = Array.from<number>({ length: n }).fill(Infinity)
 
   //如果[j + 1,i]是一个回文串那么dp[i]就等于min(dp[j] + 1)
