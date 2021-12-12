@@ -36,3 +36,31 @@ export function minRefuelStops(
 
   return res
 }
+
+//动态规划解法
+export function minRefuelStops1(
+  target: number,
+  startFuel: number,
+  stations: number[][]
+): number {
+  const n = stations.length
+  //dp[i]表示加i次油能到达的最远距离为dp[i]
+  const dp: number[] = Array.from<number>({ length: n + 1 }).fill(0)
+  //加零次油能到startFuel距离
+  dp[0] = startFuel
+
+  for (let i = 0; i < n; ++i) {
+    for (let t = i; t >= 0; --t) {
+      //如果加t次油能到达stations[i],则更新dp[t + 1]的答案
+      if (dp[t] >= stations[i][0]) {
+        dp[t + 1] = Math.max(dp[t + 1], dp[t] + stations[i][1])
+      }
+    }
+  }
+
+  for (let i = 0; i <= n; ++i) {
+    if (dp[i] >= target) return i
+  }
+
+  return -1
+}
