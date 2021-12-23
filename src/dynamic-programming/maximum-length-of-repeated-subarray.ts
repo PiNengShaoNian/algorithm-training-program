@@ -85,26 +85,27 @@ export function findLength2(nums1: number[], nums2: number[]): number {
   return ans
 }
 
-//滚动hash解法，注意typescript版本不能通过，因为
-// `x = (x * x) % mod`这行代码会爆double
-//换成c++实现后能通过
+//滚动hash解法
 export function findLength3(nums1: number[], nums2: number[]): number {
   const mod = 1000000009
   const base = 113
   const n = nums1.length
   const m = nums2.length
-  const myPow = (x: number, n: number) => {
-    let ans = 1
+  const myPow = (_: number, n: number) => {
+    let ans = 1n
+    let x = BigInt(_)
+    const m = BigInt(mod)
     while (n) {
       if (n & 1) {
-        ans = (ans * x) % mod
+        ans = (ans * x) % m
       }
 
-      x = (x * x) % mod
+      //这行代码会爆double,所以先把x声明成bigint类型返回的时候在转回double
+      x = (x * x) % m
       n >>= 1
     }
 
-    return ans
+    return parseFloat(ans + '')
   }
   const check = (len: number): boolean => {
     const p13331 = myPow(base, len - 1)
@@ -146,7 +147,7 @@ export function findLength3(nums1: number[], nums2: number[]): number {
 
   let l = 1
   let r = Math.min(nums1.length, nums2.length)
-  let ans = 1
+  let ans = 0
   while (l <= r) {
     const mid = l + ((r - l) >> 1)
     if (check(mid)) {
