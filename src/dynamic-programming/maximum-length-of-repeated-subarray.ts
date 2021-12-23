@@ -84,3 +84,78 @@ export function findLength2(nums1: number[], nums2: number[]): number {
 
   return ans
 }
+
+//滚动hash解法，注意typescript版本不能通过，因为
+// `x = (x * x) % mod`这行代码会爆double
+//换成c++实现后能通过
+export function findLength3(nums1: number[], nums2: number[]): number {
+  const mod = 1000000009
+  const base = 113
+  const n = nums1.length
+  const m = nums2.length
+  const myPow = (x: number, n: number) => {
+    let ans = 1
+    while (n) {
+      if (n & 1) {
+        ans = (ans * x) % mod
+      }
+
+      x = (x * x) % mod
+      n >>= 1
+    }
+
+    return ans
+  }
+  const check = (len: number): boolean => {
+    const p13331 = myPow(base, len - 1)
+    const hashBuckets1 = new Set<number>()
+
+    let hash1 = 0
+    for (let i = 0; i < len; ++i) {
+      hash1 = (hash1 * base + nums1[i]) % mod
+    }
+
+    hashBuckets1.add(hash1)
+
+    for (let i = len; i < n; ++i) {
+      hash1 =
+        (((hash1 - ((nums1[i - len] * p13331) % mod) + mod) % mod) * base +
+          nums1[i]) %
+        mod
+      hashBuckets1.add(hash1)
+    }
+
+    let hash2 = 0
+
+    for (let i = 0; i < len; ++i) {
+      hash2 = (hash2 * base + nums2[i]) % mod
+    }
+
+    if (hashBuckets1.has(hash2)) return true
+
+    for (let i = len; i < m; ++i) {
+      hash2 =
+        (((hash2 - ((nums2[i - len] * p13331) % mod) + mod) % mod) * base +
+          nums2[i]) %
+        mod
+      if (hashBuckets1.has(hash2)) return true
+    }
+
+    return false
+  }
+
+  let l = 1
+  let r = Math.min(nums1.length, nums2.length)
+  let ans = 1
+  while (l <= r) {
+    const mid = l + ((r - l) >> 1)
+    if (check(mid)) {
+      ans = mid
+      l = mid + 1
+    } else {
+      r = mid - 1
+    }
+  }
+
+  return ans
+}

@@ -22,6 +22,10 @@ export function strStr(s: string, t: string): number {
   }
 
   const calcHash = (l: number, r: number): number => {
+    // hello 的子串ll的hash值
+    //  hell
+    // -he00
+    // =  ll
     return (((sHash[r] - sHash[l - 1] * p13331[r - l + 1]) % mod) + mod) % mod
   }
 
