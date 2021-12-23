@@ -33,7 +33,7 @@ export function findLength1(nums1: number[], nums2: number[]): number {
   //A: [1,2,3,2,1]
   //B: [3,2,1,4,7]
   //就比如dp[3][1]就为2,因为数组[2,1]和数组[2,1,4,7]最大的公共前缀长度为2
-  
+
   const dp: number[][] = Array.from({ length: n + 1 }, () =>
     Array.from<number>({ length: m + 1 }).fill(0)
   )
@@ -44,6 +44,42 @@ export function findLength1(nums1: number[], nums2: number[]): number {
       dp[i][j] = nums1[i] === nums2[j] ? dp[i + 1][j + 1] + 1 : 0
       ans = Math.max(dp[i][j], ans)
     }
+  }
+
+  return ans
+}
+
+//滑动窗口解法
+export function findLength2(nums1: number[], nums2: number[]): number {
+  //用nums1中的开头元素去对其nums2中的每个元素，在求其中最长的公共子数组
+  //对nums2也进行相同的操作
+  const n = nums1.length
+  const m = nums2.length
+  const maxLength = (s1: number, s2: number): number => {
+    let ans = 0
+    let k = 0
+    let i = 0
+    while (s1 + i < n && s2 + i < m) {
+      if (nums1[s1 + i] === nums2[s2 + i]) {
+        ++k
+      } else {
+        k = 0
+      }
+
+      ++i
+      ans = Math.max(ans, k)
+    }
+
+    return ans
+  }
+
+  let ans = 0
+  for (let i = 0; i < n; ++i) {
+    ans = Math.max(ans, maxLength(i, 0))
+  }
+
+  for (let i = 0; i < m; ++i) {
+    ans = Math.max(ans, maxLength(0, i))
   }
 
   return ans
