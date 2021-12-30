@@ -57,3 +57,39 @@ function getMaxMatrix(matrix: number[][]): number[] {
 
   return ans
 }
+
+export function getMaxMatrix1(matrix: number[][]): number[] {
+  const n = matrix.length
+  const m = matrix[0].length
+  let max = -Infinity
+  let ans: number[] = []
+  for (let i = 0; i < n; ++i) {
+    const heights: number[] = Array.from<number>({ length: m }).fill(0)
+
+    for (let j = i; j < n; ++j) {
+      for (let k = 0; k < m; ++k) {
+        heights[k] += matrix[j][k]
+      }
+
+      let presumR = 0
+      let presumMin = 0
+      let presumMinIndex = 0
+
+      for (let k = 0; k < m; ++k) {
+        presumR += heights[k]
+
+        if (presumR - presumMin > max) {
+          ans = [i, presumMinIndex, j, k]
+          max = presumR - presumMin
+        }
+
+        if (presumR < presumMin) {
+          presumMin = presumR
+          presumMinIndex = k + 1
+        }
+      }
+    }
+  }
+
+  return ans
+}
