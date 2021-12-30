@@ -3,7 +3,7 @@ type Rect = {
   width: number
 }
 
-function largestRectangleArea(heights: number[]): number {
+export function largestRectangleArea(heights: number[]): number {
   heights.push(0)
   const n = heights.length
   const stack: Rect[] = []
