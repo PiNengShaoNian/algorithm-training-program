@@ -92,3 +92,20 @@ export function numSquares1(n: number): number {
 
   return -1
 }
+
+//动态规划解法
+export function numSquares2(n: number): number {
+  //dp[i] 表示构成i，最少需要dp[i]个完美平方数求和
+  const dp: number[] = []
+  dp[0] = 0
+  dp[1] = 1
+
+  for (let i = 2; i <= n; ++i) {
+    dp[i] = Infinity
+    for (let j = 1; j * j <= i; ++j) {
+      dp[i] = Math.min(dp[i], dp[i - j * j] + 1)
+    }
+  }
+
+  return dp[n]
+}
