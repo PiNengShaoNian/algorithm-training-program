@@ -28,3 +28,20 @@ function countSubstrings(s: string): number {
 
   return ans
 }
+
+export function countSubstrings1(s: string): number {
+  const n = s.length
+  let ans = 0
+  for (let i = 0; i < 2 * n - 1; ++i) {
+    let l = i >> 1
+    let r = l + (i % 2)
+
+    while (l >= 0 && r < n && s[l] === s[r]) {
+      --l
+      ++r
+      ++ans
+    }
+  }
+
+  return ans
+}
