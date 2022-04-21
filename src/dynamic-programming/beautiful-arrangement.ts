@@ -24,11 +24,9 @@ export function countArrangement(n: number): number {
     for (const i of matched[idx]) {
       if ((used & (1 << i)) === 0) {
         // perm[i] = i,i = idx
-        if (i % idx === 0 || idx % i === 0) {
-          used ^= 1 << i
-          Impl(idx + 1)
-          used ^= 1 << i
-        }
+        used ^= 1 << i
+        Impl(idx + 1)
+        used ^= 1 << i
       }
     }
   }
