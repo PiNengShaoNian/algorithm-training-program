@@ -24,6 +24,7 @@ export function shoppingOffers(
   }
 
   const fsLen = filterSpecial.length
+  //dfs(curNeeds)表示，当前要完成当前购买清单需要的最低价格
   const dfs = (curNeeds: number[]): number => {
     const key = curNeeds.join('-')
     if (memo.has(key)) return memo.get(key)!
@@ -42,6 +43,7 @@ export function shoppingOffers(
       }
 
       if (nextNeeds.length === n) {
+        //状态转移dfs(nextNeeds) = Math.min(dfs(nextNeeds), curSpecial[n] + dfs(nextNeeds))
         minPrice = Math.min(minPrice, dfs(nextNeeds) + curSpecial[n])
       }
     }
