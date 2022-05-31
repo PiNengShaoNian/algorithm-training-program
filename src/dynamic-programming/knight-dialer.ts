@@ -13,27 +13,25 @@ export function knightDialer(n: number): number {
     [2, 4],
   ]
 
-  //dp[start][N]表示从start起跳，在跳跃了N次后总共组成号码的个数
+  //dp[N][start]从start起跳，跳跃了N次(N从零开始)
   const dp: number[][] = [[], []]
-
-  //N为零，对于输入n为1时，也就是只需要在每个起点跳跃零次就能满足需求
   dp[0] = Array.from<number>({ length: 10 }).fill(1)
 
   for (let jump = 0; jump < n - 1; ++jump) {
     dp[~jump & 1] = Array.from<number>({ length: 10 }).fill(0)
-    for (let num = 0; num < 10; ++num) {
-      for (const neighbor of moves[num]) {
-        dp[~jump & 1][neighbor] += dp[jump & 1][num]
-        dp[~jump & 1][neighbor] %= MOD
+
+    for (let prev = 0; prev < 10; ++prev) {
+      for (const cur of moves[prev]) {
+        dp[~jump & 1][cur] += dp[jump & 1][prev]
+        dp[~jump & 1][cur] %= MOD
       }
     }
   }
 
   let ans = 0
-
   for (let i = 0; i < 10; ++i) {
-    ans += dp[~n & 1][i] % MOD
+    ans = (ans + dp[~n & 1][i]) % MOD
   }
 
-  return ans % MOD
+  return ans
 }
