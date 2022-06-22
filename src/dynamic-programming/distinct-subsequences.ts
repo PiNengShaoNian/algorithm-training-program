@@ -2,7 +2,7 @@
 export function numDistinct(s: string, t: string): number {
   //原问题的的意思就是从s中挑出t.length个字符组成t，总共又几种挑法
   const memo: number[][] = Array.from({ length: s.length }, () => [])
-  //Impl(i,j)的意思是从s的前i个字符组成的字串s[0:j]
+  //Impl(i,j)的意思是从s的前i个字符组成的字串s[0:i]
   //挑出j个字符能组成t[0:j],总共有Impl(i,j)个挑法
   const Impl = (i: number, j: number): number => {
     //进行适当的剪枝，如果s[0:i]的长度小于t[0:j]，先然不够挑出足够的字符构成t[0:j]
@@ -13,7 +13,7 @@ export function numDistinct(s: string, t: string): number {
     if (typeof memo[i][j] === 'number') return memo[i][j]
 
     //如果两个字串的末尾字符相等那么可以选择挑出s[i]作为候选字符，将问题规模
-    //缩小到Impl(i - 1,j - 1)或者选择不调问题就变成Impl(i - 1, j)
+    //缩小到Impl(i - 1,j - 1)或者选择不挑问题就变成Impl(i - 1, j)
     if (s[i] === t[j]) {
       return (memo[i][j] = Impl(i - 1, j - 1) + Impl(i - 1, j))
     } else {
