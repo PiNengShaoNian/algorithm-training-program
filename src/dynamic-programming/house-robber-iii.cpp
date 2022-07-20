@@ -7,7 +7,7 @@ public:
     }
 
     // dp(root, 1)表示打劫时，打劫root能获得的最大收益
-    // dp(root, 1)表示打劫时，不打劫root能获得的最大收益
+    // dp(root, 0)表示打劫时，不打劫root能获得的最大收益
     // 因为有记忆化的开销，所以速度和空间复杂度都不好看
     int dp(TreeNode *root, int pick) {
         if(root == nullptr) return 0;
