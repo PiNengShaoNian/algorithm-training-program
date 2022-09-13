@@ -60,3 +60,45 @@ public:
         return {dp[0][0], count[0][0] % MOD};
     }
 };
+
+class Solution1 {
+public:
+    using score_path = pair<int,int>;
+    int mod = 1000000007;
+
+    void update(vector<vector<score_path>>& dp, int n, int row_adj, int col_adj, int row, int col) {
+        if(row_adj >= n || col_adj >= n || dp[row_adj][col_adj].first == -1) {
+            return;
+        }
+
+        if(dp[row_adj][col_adj].first > dp[row][col].first) {
+            dp[row][col] = dp[row_adj][col_adj];
+        }
+        else if(dp[row_adj][col_adj].first == dp[row][col].first){
+            dp[row][col].second += dp[row_adj][col_adj].second;
+            dp[row][col].second %= mod;
+        }
+    }
+
+    vector<int> pathsWithMaxScore(vector<string>& board) {
+        int n = board.size();
+        vector<vector<score_path>> dp(n, vector<score_path>(n, {-1, 0}));
+
+        dp[n - 1][n - 1] = {0, 1};
+        for(int i = n - 1; i >= 0; --i) {
+            for(int j = n - 1; j >= 0; --j) {
+                if(!(i == n - 1 && j == n - 1) && board[i][j] != 'X') {
+                    update(dp, n, i + 1, j, i, j);
+                    update(dp, n, i, j + 1, i, j);
+                    update(dp, n, i + 1, j + 1, i, j);
+
+                    if(dp[i][j].first != -1) {
+                        dp[i][j].first += (board[i][j] == 'E' ? 0 : board[i][j] - '0');
+                    }
+                }
+            }
+        }
+
+        return dp[0][0].first == -1 ? vector<int>{0, 0} : vector<int>{dp[0][0].first, dp[0][0].second};
+    }
+};
