@@ -41,3 +41,56 @@ public:
         }
     }
 };
+
+//并查集解法
+class Solution1 {
+public:
+   int dirs [4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+   vector<int> fa;
+
+   inline int vtoi(int i, int j, int cols) {
+       return i * cols + j;
+   }
+
+   int find (int x) {
+        if(fa[x] == x) return x;
+
+        return fa[x] = find(fa[x]);
+   };
+
+   void solve(vector<vector<char>>& board) {
+        int n = board.size();
+        int m = board[0].size();
+        fa.resize(n * m + 1);
+
+        for(int i = 0; i < n * m + 1; ++i) {
+            fa[i] = i;
+        }
+
+        for(int i = 0; i < n; ++i) {
+            for(int j = 0; j < m; ++j) {
+                if(board[i][j] != 'O') continue;
+
+                for(int k = 0; k < 4; ++k) {
+                    int newRow = i + dirs[k][0];
+                    int newCol = j + dirs[k][1];
+
+                    if(newRow < 0 || newRow >= n || newCol < 0 || newCol >= m) {
+                        fa[find(vtoi(i, j, m))] = fa[find(n * m)];
+                    }
+                    else if(board[newRow][newCol] == 'O'){
+                        fa[find(vtoi(newRow, newCol, m))] = fa[find(vtoi(i, j, m))];
+                    }
+                }
+            }
+        }
+
+        for(int i = 0; i < n; ++i) {
+            for(int j = 0; j < m; ++j) {
+                if(board[i][j] == 'O' && find(vtoi(i, j, m)) != find(n * m)) {
+                    board[i][j] = 'X';
+                }
+            }
+        }
+    }
+};
