@@ -94,3 +94,86 @@ public:
         }
     }
 };
+
+//枚举联通分量解法，如果一个联通分量中所有顶点的邻居都没有出界，那该分量就需要被覆盖
+class Solution {
+public:
+    int cols;
+    int rows;
+    int dirs[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+    struct Point {
+        int i;
+        int j;
+    };
+    inline int indexToVertex(int i, int j) {
+        return i * cols + j;
+    }
+
+    inline Point vertexToIndex(int v) {
+        return {v / cols, v % cols};
+    }
+
+    inline bool isNeighborOutRange(int i, int j) {
+        if(i - 1 < 0 || i + 1 >= rows || j - 1 < 0 || j + 1 >= cols) return true;
+        return false;
+    }
+
+    void solve(vector<vector<char>>& board) {
+        unordered_map<int,vector<int>> idToPoints;
+        unordered_map<int,bool> isSurrounded;
+        rows = board.size();
+        cols = board[0].size();
+        vector<vector<bool>> visited(rows, vector<bool>(cols, false));
+
+        int id = 0;
+        for(int i = 0; i < rows; ++i) {
+            for(int j = 0; j < cols; ++j) {
+                if(board[i][j] != 'O' || visited[i][j]) continue;
+
+                vector<int> stack;
+                stack.push_back(indexToVertex(i, j));
+                isSurrounded[id] = true;
+
+                if(isNeighborOutRange(i, j)) {
+                    isSurrounded[id] = false;
+                }
+
+                while(stack.size()) {
+                    int vertex = stack.back();
+                    stack.pop_back();
+                    Point p = vertexToIndex(vertex);
+                    visited[p.i][p.j] = true;
+                    if(idToPoints.find(id) == idToPoints.end()) {
+                        idToPoints[id] = move(vector<int>());
+                    }
+                    
+                    idToPoints[id].push_back(vertex);
+                    
+                    for(int k = 0; k < 4; ++k) {
+                        int newI = dirs[k][0] + p.i;
+                        int newJ = dirs[k][1] + p.j;
+
+                        if(newI >= 0 && newI < rows && newJ >= 0 && newJ < cols && !visited[newI][newJ] && board[newI][newJ] == 'O') {
+                            stack.push_back(indexToVertex(newI, newJ));
+                            if(isNeighborOutRange(newI, newJ)) {
+                                isSurrounded[id] = false;
+                            }
+                        }
+                    }
+                    
+                }
+
+                ++id;
+            }
+        }
+
+        for(auto pair : isSurrounded) {
+            if(!pair.second) continue;
+
+            for(int v : idToPoints[pair.first]) {
+                Point p = vertexToIndex(v);
+                board[p.i][p.j] = 'X';
+            }
+        } 
+    }
+};
