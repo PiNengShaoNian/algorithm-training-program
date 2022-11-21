@@ -9,17 +9,17 @@ export function largestRectangleArea(heights: number[]): number {
   const stack: Rect[] = []
   let ans = 0
   for (let i = 0; i < n; ++i) {
-    let accumulationWdith = 0
+    let accumulationWidth = 0
     while (stack.length && stack[stack.length - 1].height > heights[i]) {
       const { width, height } = stack.pop()!
-      accumulationWdith += width
+      accumulationWidth += width
 
-      ans = Math.max(height * accumulationWdith, ans)
+      ans = Math.max(height * accumulationWidth, ans)
     }
 
     stack.push({
       height: heights[i],
-      width: accumulationWdith + 1,
+      width: accumulationWidth + 1,
     })
   }
 
