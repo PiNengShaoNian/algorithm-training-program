@@ -45,6 +45,8 @@ public:
             return 0;
         vector<int> stack;
         vector<char> valid(n, 1);
+        // 将字符串中有效的括号标记为1，非法的字符标记为0
+        // 比如()) ==> [1, 1, 0]
         for (int i = 0; i < n; ++i)
         {
             if (s[i] == '(')
@@ -66,6 +68,7 @@ public:
             stack.pop_back();
         }
 
+        // 寻找最长的1串长度
         int ans = 0;
         int len = 0;
         for (int i = 0; i < n; ++i)
