@@ -1,8 +1,10 @@
-function flatten(node: TreeNode | null): void {
+declare type TreeNode = any
+
+export function flatten(node: TreeNode | null): void {
   let preNode: TreeNode | null = null
   const Impl = (root: TreeNode | null) => {
     if (!root) {
-      return null
+      return
     }
 
     Impl(root.right)
