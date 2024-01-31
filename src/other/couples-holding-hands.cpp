@@ -21,3 +21,52 @@ class Solution {
     return cnt;
   }
 };
+
+class UnionFind {
+ private:
+  vector<int> data;
+  int count;
+
+ public:
+  UnionFind(int n) {
+    data = vector<int>(n);
+    for (int i = 0; i < n; i++) {
+      data[i] = i;
+    }
+    count = n;
+  }
+
+  int size() { return count; }
+
+  int find(int x) {
+    if (data[x] == x) {
+      return x;
+    }
+
+    return (data[x] = find(data[x]));
+  }
+
+  void connect(int x, int y) {
+    int rootX = find(x);
+    int rootY = find(y);
+    if (rootX == rootY) {
+      return;
+    }
+
+    data[rootX] = rootY;
+    count--;
+  }
+};
+
+class Solution {
+ public:
+  int minSwapsCouples(vector<int>& row) {
+    int n = row.size();
+    UnionFind uf(n / 2);
+    for (int i = 0; i < n; i += 2) {
+      uf.connect(row[i] / 2, row[i + 1] / 2);
+    }
+
+    return (n / 2) - uf.size();
+  }
+};
