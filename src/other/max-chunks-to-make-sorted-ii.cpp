@@ -25,3 +25,24 @@ class Solution {
     return ans;
   }
 };
+
+class Solution {
+ public:
+  int maxChunksToSorted(vector<int>& arr) {
+    vector<int> stk;
+    for (int num : arr) {
+      if (stk.empty() || num >= stk.back()) {
+        stk.push_back(num);
+      } else {
+        int mx = stk.back();
+        stk.pop_back();
+        while (stk.size() && stk.back() > num) {
+          stk.pop_back();
+        }
+        stk.push_back(mx);
+      }
+    }
+
+    return stk.size();
+  }
+};
