@@ -112,3 +112,59 @@ class Solution1 {
 
   bool inArea(int x, int y) { return x >= 0 && x < N && y >= 0 && y < N; }
 };
+
+class Solution2 {
+ public:
+  int swimInWater(vector<vector<int>> &grid) {
+    int n = grid.size();
+    // 定义 cmp 结构体为 swimInWater 函数的内部类
+    struct cmp {
+      vector<vector<int>> &grid;  // 引用外部的局部变量 grid
+      cmp(vector<vector<int>> &g) : grid(g) {}  // 构造函数初始化 grid 引用
+
+      bool operator()(pair<int, int> &a, pair<int, int> &b) {
+        return grid[a.first][a.second] > grid[b.first][b.second];  // 小根堆
+      }
+    };
+
+    // 使用自定义的比较器 cmp
+    priority_queue<pair<int, int>, vector<pair<int, int>>, cmp> minHeap(
+        (cmp(grid)));
+    minHeap.push({0, 0});
+    vector<vector<bool>> visited(n, vector<bool>(n, false));
+    // distTo[i][j] 表示：到顶点 [i, j] 须要等待的最少的时间
+    vector<vector<int>> distTo(n, vector<int>(n, n * n));
+    distTo[0][0] = grid[0][0];
+
+    while (!minHeap.empty()) {
+      auto [x, y] = minHeap.top();
+      minHeap.pop();
+      if (visited[x][y]) {
+        continue;
+      }
+
+      visited[x][y] = true;
+      if (x == n - 1 && y == n - 1) {
+        return distTo[n - 1][n - 1];
+      }
+
+      for (auto &&dir : DIRECTIONS) {
+        int newX = x + dir[0];
+        int newY = y + dir[1];
+        if (inArea(newX, newY, n) && !visited[newX][newY] &&
+            max(distTo[x][y], grid[newX][newY]) < distTo[newX][newY]) {
+          distTo[newX][newY] = max(distTo[x][y], grid[newX][newY]);
+          minHeap.push({newX, newY});
+        }
+      }
+    }
+
+    return -1;
+  }
+
+ private:
+  vector<vector<int>> DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+  bool inArea(int x, int y, int n) {
+    return x >= 0 && x < n && y >= 0 && y < n;
+  }
+};
