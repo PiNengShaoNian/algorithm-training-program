@@ -21,3 +21,23 @@ public:
         return dp(0);
     }
 };
+
+class Solution {
+public:
+    int minimumCoins(vector<int>& prices) {
+        int n = prices.size();
+        deque<pair<int, int>> queue;
+        queue.push_front({n, 0});
+        for (int i = n - 1; i >= 0; i--) {
+            while (!queue.empty() && queue.back().first >= 2 * i + 3) {
+                queue.pop_back();
+            }
+            int cur = queue.back().second + prices[i];
+            while (!queue.empty() && queue.front().second >= cur) {
+                queue.pop_front();
+            }
+            queue.push_front({i, cur});
+        }
+        return queue.front().second;
+    }
+};
