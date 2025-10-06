@@ -119,7 +119,7 @@ class Solution2 {
     int n = grid.size();
     // 定义 cmp 结构体为 swimInWater 函数的内部类
     struct cmp {
-      vector<vector<int>> &grid;  // 引用外部的局部变量 grid
+      vector<vector<int>> &grid;                // 引用外部的局部变量 grid
       cmp(vector<vector<int>> &g) : grid(g) {}  // 构造函数初始化 grid 引用
 
       bool operator()(pair<int, int> &a, pair<int, int> &b) {
@@ -166,5 +166,56 @@ class Solution2 {
   vector<vector<int>> DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
   bool inArea(int x, int y, int n) {
     return x >= 0 && x < n && y >= 0 && y < n;
+  }
+};
+
+class Solution {
+ public:
+  int n;
+  int dirs[4][2] = {{1, 0}, {0, -1}, {-1, 0}, {0, 1}};
+  vector<vector<bool>> visit;
+  vector<vector<int>> grid;
+  unordered_map<int, int> memo;
+
+  int getKey(int row, int col, int maxHeight) {
+    return (row << 20) | (col << 13) | maxHeight;
+  }
+
+  int dfs(int row, int col, int maxHeight) {
+    if (row == n - 1 && col == n - 1) {
+      return maxHeight;
+    }
+
+    int key = getKey(row, col, maxHeight);
+    if (memo.count(key)) {
+      return memo[key];
+    }
+
+    visit[row][col] = true;
+
+    int ans = INT_MAX;
+    for (int i = 0; i < 4; i++) {
+      int newRow = dirs[i][0] + row;
+      int newCol = dirs[i][1] + col;
+      if (newRow >= 0 && newRow < n && newCol >= 0 && newCol < n &&
+          !visit[newRow][newCol]) {
+        ans =
+            min(ans, dfs(newRow, newCol, max(maxHeight, grid[newRow][newCol])));
+      }
+    }
+
+    visit[row][col] = false;
+    memo[key] = ans;
+    return ans;
+  }
+
+  int swimInWater(vector<vector<int>> &grid) {
+    int n = grid.size();
+    this->n = n;
+    this->grid = grid;
+    this->visit = vector<vector<bool>>(n, vector<bool>(n, false));
+    this->memo.clear();
+
+    return dfs(0, 0, grid[0][0]);
   }
 };
