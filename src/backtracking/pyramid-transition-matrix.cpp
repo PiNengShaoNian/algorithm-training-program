@@ -5,10 +5,10 @@ class Solution {
   unordered_set<long long> seen;
 
  public:
-  bool pyramidTransition(string bottom, vector<string> &allowed) {
+  bool pyramidTransition(string bottom, vector<string>& allowed) {
     memset(T, 0, sizeof(T));
     seen.clear();
-    for (auto &s : allowed) {
+    for (auto& s : allowed) {
       T[s[0] - 'A'][s[1] - 'A'] |= 1 << (s[2] - 'A');
     }
 
@@ -27,7 +27,7 @@ class Solution {
   // N    - 当前行的下一行(方便从改行枚举出状态,
   // 比如当前在枚举第0行的状态那么此时N就为1) i    -
   // 当时要枚举此行中的第几位的状态
-  bool solve(vector<vector<int>> &A, long long R, int N, int i) {
+  bool solve(vector<vector<int>>& A, long long R, int N, int i) {
     if (N == 1 && i == 1) {  // 如果成功枚举完整个金字塔，返回true
       return true;
     } else if (i == N) {
@@ -54,5 +54,48 @@ class Solution {
       }
       return false;
     }
+  }
+};
+
+class Solution {
+ public:
+  bool pyramidTransition(string bottom, vector<string>& allowed) {
+    string groups[6][6]{};
+    for (auto& s : allowed) {
+      groups[s[0] - 'A'][s[1] - 'A'] += s[2];
+    }
+
+    int n = bottom.size();
+    vector<string> pyramid(n);
+    for (int i = 0; i < n - 1; i++) {
+      pyramid[i].resize(i + 1);
+    }
+    pyramid[n - 1] = bottom;
+
+    // 现在准备填 (i, j) 这个格子
+    // 返回继续填能否填完所有格子（从下往上填，每行从左到右填）
+    auto dfs = [&](this auto&& dfs, int i, int j) -> bool {
+      if (i < 0) {  // 所有格子都已填完
+        return true;
+      }
+
+      if (j == i + 1) {        // i 行已填完
+        return dfs(i - 1, 0);  // 开始填 i-1 行
+      }
+
+      // 枚举 (i, j) 填什么字母
+      // 这取决于 (i+1, j) 和 (i+1, j+1) 填的字母
+      for (char top :
+           groups[pyramid[i + 1][j] - 'A'][pyramid[i + 1][j + 1] - 'A']) {
+        pyramid[i][j] = top;
+        if (dfs(i, j + 1)) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    // 从倒数第二行开始填
+    return dfs(n - 2, 0);
   }
 };
